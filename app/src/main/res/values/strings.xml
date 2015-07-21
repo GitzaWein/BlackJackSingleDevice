@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">BlackJackSingleDevice1</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_end_game">EndGameActivity</string>
+    <string name="title_activity_game_play">GamePlayActivity</string>
+    <string name="title_activity_setup_game">SetupGameActivity</string>
+    <string name="welcome_message">Hi there! Welcome to TTIs BlackJack Table!</string>
+</resources>
