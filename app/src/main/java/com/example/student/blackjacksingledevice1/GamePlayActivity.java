@@ -16,6 +16,7 @@ public class GamePlayActivity extends ActionBarActivity {
 
     ArrayList<String> namesAL = new ArrayList<>();
     LinearLayout myLL;
+    public boolean hitOrStick;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,38 +54,64 @@ public class GamePlayActivity extends ActionBarActivity {
         dealersTurn(players, deck, playersNames);
 
     }
-    public void playersTurn(int i, int[][] players,boolean[] deck, ArrayList<String> playersName) {
+    public void playersTurn(int i, int[][] players,boolean[] deck, ArrayList<String> playersNames) {
         //printCards(players, i, playersName);
         //need to put this if statement in the startGame method
         if(isBlackJack(players[i])){
-            TextView textView = new TextView(this);
-            textView.setText(playersName.get(i) + ", you have BlackJack!! You Win!");
-            myLL.addView(textView);
+            TextView tv = new TextView(this);
+            tv.setText(playersNames.get(i) + ", you have BlackJack!! You Win!");
+            myLL.addView(tv);
             return;
         }
-        promptUser(i, players, deck, playersName);
+        promptUser(i, players, deck, playersNames);
 
     }
-    public static void promptUser(int currentPlayer, int[][] players, boolean[] deck, ArrayList<String> playersNames) {
+    public void promptUser(int currentPlayer, int[][] players, boolean[] deck, ArrayList<String> playersNames) {
         //Scanner input = new Scanner(System.in);
-        boolean isHit = true;
+        boolean isHit;
         do{
             int sumOfCards = countCards(players[currentPlayer]);
             if(sumOfCards >  21){
+                TextView tv = new TextView(this);
+                tv.setText(playersNames.get(currentPlayer) + ", you busted...sorry you lose :(");
+                myLL.addView(tv);
                 //Toast.makeText(GamePlayActivity.this, playersNames[currentPlayer]  + ", you Busted. Your turn is over; You lost ", Toast.LENGTH_LONG).show();
                 break;
             }
-           // System.out.print(playersNames.get(currentPlayer) +", your cards count up to "
-                    //+ sumOfCards +" Would you like to Hit or Stick?";
-            if(isHit)
-            {
+            TextView tv = new TextView(this);
+            tv.setText(playersNames.get(currentPlayer) +", your cards count up to " + sumOfCards);
+            myLL.addView(tv);
+
+            isHit = hitOrStickDB();
+            //" Would you like to Hit or Stick?";
+            //get "response" here for value of isHit
+
+            if(isHit) {
                 hit(deck, players[currentPlayer]);
-                //Toast("You were dealt a " + getCardFaceValueText(players, currentPlayer, getPlayersFirstEmptyCardIndex(players[currentPlayer])-1));  //need to add here if its a 10,11,12 that its king queen or jack
+                TextView tv2 = new TextView(this);
+                tv2.setText("You were dealt a " + getCardFaceValueText(players, currentPlayer, getPlayersFirstEmptyCardIndex(players[currentPlayer])-1));
+                tv2.setPadding(15, 0, 0, 0);
+                myLL.addView(tv2);
+               // Toast.makeText(GamePlayActivity.this,("You were dealt a " + getCardFaceValueText(players, currentPlayer, getPlayersFirstEmptyCardIndex(players[currentPlayer])-1)), Toast.LENGTH_LONG).show();  //need to add here if its a 10,11,12 that its king queen or jack
+            }else{
+                TextView textView3 = new TextView(this);
+                textView3.setText(playersNames.get(currentPlayer) + ", your turn is over.");
+                textView3.setPadding(15, 0, 0, 0);
+                myLL.addView(textView3);
             }
             isHit = false;
         } while(isHit);
         // input.close();
-
+    }
+    public boolean  hitOrStickDB(){
+        try {
+            Thread.sleep(7000);                 //1000 milliseconds is one second.
+        } catch(InterruptedException ex) {
+            Thread.currentThread().interrupt();
+        }
+        new HitOrStickDialogBox().show(getFragmentManager(), "dialogBox");
+        return hitOrStick;
+        //return (getIntent().getBooleanExtra("playersChoice", false));
     }
     public static int hit(boolean[] deck, int[] whosTurn) {
         int x = (int)(Math.random() * 52);
