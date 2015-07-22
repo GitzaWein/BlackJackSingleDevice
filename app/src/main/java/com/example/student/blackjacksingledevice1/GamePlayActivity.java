@@ -55,7 +55,7 @@ public class GamePlayActivity extends ActionBarActivity {
 
     }
     public void playersTurn(int i, int[][] players,boolean[] deck, ArrayList<String> playersNames) {
-        //printCards(players, i, playersName);
+        printCards(players, i, playersNames);
         //need to put this if statement in the startGame method
         if(isBlackJack(players[i])){
             TextView tv = new TextView(this);
@@ -104,16 +104,16 @@ public class GamePlayActivity extends ActionBarActivity {
         // input.close();
     }
     public boolean  hitOrStickDB(){
-        try {
-            Thread.sleep(7000);                 //1000 milliseconds is one second.
-        } catch(InterruptedException ex) {
-            Thread.currentThread().interrupt();
-        }
+       // try {
+           // Thread.sleep(7000);                 //1000 milliseconds is one second.
+       // } catch(InterruptedException ex) {
+            //Thread.currentThread().interrupt();
+        //}
         new HitOrStickDialogBox().show(getFragmentManager(), "dialogBox");
         return hitOrStick;
         //return (getIntent().getBooleanExtra("playersChoice", false));
     }
-    public static int hit(boolean[] deck, int[] whosTurn) {
+    public static  int hit(boolean[] deck, int[] whosTurn) {
         int x = (int)(Math.random() * 52);
         while(deck[x] == true) {
             x = (int)(Math.random() * 52);
@@ -121,6 +121,30 @@ public class GamePlayActivity extends ActionBarActivity {
         deck[x] = true;
         whosTurn[getPlayersFirstEmptyCardIndex(whosTurn)] = x;
         return x;
+    }
+    public void printCards(int[][] playersHands, int currentPlayer, ArrayList<String> playersNames) {
+
+        for (int player = 0; player < playersNames.size(); player++){
+            TextView tv = new TextView(this);
+            tv.setText(playersNames.get(player) + "'s cards are: ");
+            myLL.addView(tv);
+           // System.out.println(playersNames.get(player) + "'s cards are: ");
+            for (int card = 0; card < playersHands[0].length && playersHands[player][card]!= -1; card++) {
+
+                String cardFaceValue = getCardFaceValueText(playersHands, player, card);
+                TextView tv2 = new TextView(this);
+                tv2.setText(cardFaceValue);
+                myLL.addView(tv2);
+                //System.out.println(cardFaceValue);
+                if(playersNames.get(player) == "Dealer" && currentPlayer != playersHands.length -1)
+                    break;
+            }
+
+            TextView tv3 = new TextView(this);
+            tv3.setText("\n");
+            myLL.addView(tv3);
+           // System.out.println();
+        }
     }
     private static int getPlayersFirstEmptyCardIndex(int[] whosTurn) {
         int i;
