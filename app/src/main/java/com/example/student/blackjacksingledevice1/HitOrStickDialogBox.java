@@ -22,6 +22,7 @@ public class HitOrStickDialogBox extends DialogFragment {
             //when user clicks Hit this will happen
             GamePlayActivity activity = (GamePlayActivity) getActivity();
             activity.hitOrStick = true;
+            activity.infinite = false;
         }
     };
     DialogInterface.OnClickListener nListener = new DialogInterface.OnClickListener(){
@@ -30,6 +31,7 @@ public class HitOrStickDialogBox extends DialogFragment {
             //when user clicks Stick this will happen
             GamePlayActivity activity = (GamePlayActivity) getActivity();
             activity.hitOrStick = false;
+            activity.infinite = false;
         }
     };
 }

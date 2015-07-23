@@ -19,6 +19,7 @@
                 android:layout_height="wrap_content"
                 android:paddingLeft="10dp"
                 android:text="Here we go!\n"/>
+
         </LinearLayout>
     </ScrollView>
 </RelativeLayout>

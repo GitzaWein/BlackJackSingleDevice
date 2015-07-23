@@ -4,6 +4,8 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,7 +19,7 @@ public class GamePlayActivity extends ActionBarActivity {
     ArrayList<String> namesAL = new ArrayList<>();
     LinearLayout myLL;
     public boolean hitOrStick;
-
+    public boolean infinite;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,13 +30,13 @@ public class GamePlayActivity extends ActionBarActivity {
         startGame(namesAL);
     }
 
-    public void startGame(ArrayList<String> playersNames) {
-        boolean[] deck = new boolean[52];
+    public void startGame(final ArrayList<String> playersNames) {
+        final boolean[] deck = new boolean[52];
         int amountOfPlayers = playersNames.size();
 
         playersNames.add("Dealer");
 
-        int[][] players = new int[amountOfPlayers + 1][12];
+        final int[][] players = new int[amountOfPlayers + 1][12];
 
         //populating the players array with the value -1
         for (int i = 0; i < players.length; i++)
@@ -44,16 +46,27 @@ public class GamePlayActivity extends ActionBarActivity {
         for (int i = 0; i < players.length; i++)
             dealCards(deck, players[i]);
 
-        for (int i = 0; i < players.length - 1; i++){
-            TextView tv = new TextView(this);
-            tv.setText("\nIt is " + playersNames.get(i) + "'s turn.");
-            myLL.addView(tv);
-            playersTurn(i, players, deck, playersNames);
+        Button btn = new Button(this);
+        btn.setText("Continue");
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startPlaying(players,playersNames,deck);
+            }
+        });
+        myLL.addView(btn);
+    }
+        public void startPlaying(int[][] players, ArrayList<String> playersNames, boolean[] deck){
+            for (int i = 0; i < players.length - 1; i++){
+                TextView tv = new TextView(this);
+                tv.setText("\nIt is " + playersNames.get(i) + "'s turn.");
+                myLL.addView(tv);
+                playersTurn(i, players, deck, playersNames);
+            }
+
+            dealersTurn(players, deck, playersNames);
         }
 
-        dealersTurn(players, deck, playersNames);
-
-    }
     public void playersTurn(int i, int[][] players,boolean[] deck, ArrayList<String> playersNames) {
         printCards(players, i, playersNames);
         //need to put this if statement in the startGame method
@@ -109,6 +122,11 @@ public class GamePlayActivity extends ActionBarActivity {
        // } catch(InterruptedException ex) {
             //Thread.currentThread().interrupt();
         //}
+        for(int i = 0; i < 2000; i++){
+
+        }
+        while(infinite){
+        }
         new HitOrStickDialogBox().show(getFragmentManager(), "dialogBox");
         return hitOrStick;
         //return (getIntent().getBooleanExtra("playersChoice", false));
@@ -126,7 +144,7 @@ public class GamePlayActivity extends ActionBarActivity {
 
         for (int player = 0; player < playersNames.size(); player++){
             TextView tv = new TextView(this);
-            tv.setText(playersNames.get(player) + "'s cards are: ");
+            tv.setText("\n" + playersNames.get(player) + "'s cards are:");
             myLL.addView(tv);
            // System.out.println(playersNames.get(player) + "'s cards are: ");
             for (int card = 0; card < playersHands[0].length && playersHands[player][card]!= -1; card++) {
@@ -224,6 +242,11 @@ public class GamePlayActivity extends ActionBarActivity {
             if (dSum < 17){
                 hit(deck, players[players.length - 1]);
                 dSum = countCards(players[players.length - 1]);
+                TextView tv2 = new TextView(this);
+                tv2.setText("The dealer was dealt a "
+                        + getCardFaceValueText(players, players.length - 1, getPlayersFirstEmptyCardIndex(players[players.length - 1])-1)
+                        + " \n Dealer, your cards now count up to " + dSum);
+                myLL.addView(tv2);
                // System.out.println("To see what the dealer has dealt, press enter!");
                 //Scanner input = new Scanner(System.in);
                 //input.nextLine();
@@ -234,6 +257,11 @@ public class GamePlayActivity extends ActionBarActivity {
             }else if(isThereOneAceHigh(players[players.length - 1], dSum) && dSum == 17){ // this is what the method is expecting... the isThereOneAce method is also expecting to be passed in something
                 hit(deck, players[players.length - 1]);
                 dSum = countCards(players[players.length - 1]);
+                TextView tv3 = new TextView(this);
+                tv3.setText("The dealer was dealt a "
+                        + getCardFaceValueText(players, players.length - 1, getPlayersFirstEmptyCardIndex(players[players.length - 1]) - 1)
+                        + " \n Dealer, your cards now count up to " + dSum);
+                myLL.addView(tv3);
                 //System.out.println("To see what the dealer has dealt, press enter!");
                 //Scanner input = new Scanner(System.in);
                 //input.nextLine();
@@ -242,14 +270,26 @@ public class GamePlayActivity extends ActionBarActivity {
                    //     + " count up to " + dSum);
                 isHit = true;
             }else{   //stick
+                TextView tv4 = new TextView(this);
+                tv4.setText("\nAll players cards will be displayed:");
+                myLL.addView(tv4);
                 //System.out.println("\nAll players cards will be displayed:");
-               // printCards(players, players.length - 1, playersNames);
+                printCards(players, players.length - 1, playersNames);
                 if(dSum > 21){
+                    TextView tv5 = new TextView(this);
+                    tv5.setText("Dealer busted with a total of " + dSum );
+                    myLL.addView(tv5);
                     //System.out.println("Dealer busted with a total of " + dSum );
                     for(int i = 0; i < players.length - 1; i++){
                         if(countCards(players[i]) <= 21) {//checks if the player is not busted (used to be in the isPlayerNotBusted method)
+                            TextView tv6 = new TextView(this);
+                            tv6.setText(playersNames.get(i) + ": won!");
+                            myLL.addView(tv6);
                             //System.out.println(playersNames.get(i) + ": won!");
                         } else{
+                            TextView tv7 = new TextView(this);
+                            tv7.setText(playersNames.get(i) + ": lost.");
+                            myLL.addView(tv7);
                             //System.out.println(playersNames.get(i) + ": lost.");
                         }
                     }
@@ -257,13 +297,25 @@ public class GamePlayActivity extends ActionBarActivity {
                     for(int i = 0; i < players.length - 1; i++){
                         if(countCards(players[i]) <= 21){//checks if the player is not busted
                             if(countCards(players[i]) > dSum) {
+                                TextView tv8 = new TextView(this);
+                                tv8.setText(playersNames.get(i) + ": won!");
+                                myLL.addView(tv8);
                                 // System.out.println(playersNames.get(i) + ": won!");
                             }else if(countCards(players[i]) == dSum) {
+                                TextView tv9 = new TextView(this);
+                                tv9.setText(playersNames.get(i) + " and the Dealer -- PUSH, DRAW");
+                                myLL.addView(tv9);
                                 //System.out.println(playersNames.get(i) + " and the Dealer -- PUSH, DRAW");
                             }else {//player has less than dealerSum
+                                TextView tv0 = new TextView(this);
+                                tv0.setText(playersNames.get(i) + " lost.");
+                                myLL.addView(tv0);
                                 //System.out.println(playersNames.get(i) + " lost.");
                             }
                         }else {
+                            TextView tv01 = new TextView(this);
+                            tv01.setText(playersNames.get(i) + " lost.");
+                            myLL.addView(tv01);
                            // System.out.println(playersNames.get(i) + " lost.");
                         }
                     }
